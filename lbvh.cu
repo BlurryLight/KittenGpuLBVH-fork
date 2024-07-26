@@ -15,6 +15,8 @@
 #include <thrust/execution_policy.h>
 
 #include <unordered_set>
+#include <iostream>
+#include "omp.h"
 
 namespace Kitten {
 
@@ -549,7 +551,7 @@ namespace Kitten {
 		const int N = 100000;
 		const float R = 0.001f;
 
-		printf("Generating Data...\n");
+		std::cout << "Generating " << N << " Data..." << std::endl;
 		vector<Kitten::Bound<3, float>> points(N);
 
 		srand(1);
@@ -594,9 +596,11 @@ namespace Kitten {
 				good = false;
 			}
 		}
+		omp_set_num_threads(16);		
 
 		int numCPUFound = 0;
 		printf("\nRunning brute force CPU collision detection...\n");
+		printf("Num of CPU: %d\n", omp_get_num_procs());
 #pragma omp parallel for
 		for (int i = 0; i < N; i++)
 			for (int j = i + 1; j < N; j++)
